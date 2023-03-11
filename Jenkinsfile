@@ -8,6 +8,15 @@ pipeline {
             }
         }
 
+        stage('image build') {
+            steps {
+                script {
+                    echo "build"
+                }
+            }
+
+        }
+
 
 
     }
