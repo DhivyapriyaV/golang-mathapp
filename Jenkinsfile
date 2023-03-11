@@ -1,5 +1,5 @@
 pipeline {
-    agent {'docker-agent'} 
+    agent {docker-agent} 
 
     stages {
         stage('checkout scm') {
