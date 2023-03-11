@@ -54,7 +54,7 @@ pipeline {
         stage('docker run') {
             steps {
                 script {
-                    sh 'docker run -d -p 8010:8010 --rm --name mygolangcontainer ' + registry + imageName:tagName
+                    sh 'docker run -d -p 8010:8010 --rm --name mygolangcontainer ' + registry + imageName + tagName
                 }
             }
         }
