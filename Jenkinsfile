@@ -1,6 +1,11 @@
 pipeline {
     agent {label 'docker-agent'} 
 
+    environment {
+        imageName = "mygolangmathapp"
+        dockerImage = ''
+    }
+
     stages {
         stage('checkout scm') {
             steps {
