@@ -17,7 +17,7 @@ pipeline {
             steps {
                 script {
                     // echo "build"
-                    dockerImage = docker.build mygolangmathapp
+                    dockerImage = docker.build imageName
                 }
             }
 
