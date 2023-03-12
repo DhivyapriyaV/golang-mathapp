@@ -30,8 +30,8 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry( 'http://'+registry, registryCredentials ) {
-                     // dockerImage.push('latest')
-                     dockerImage.push(tagName)
+                     dockerImage.push('latest')
+                    //  dockerImage.push(tagName)
                      }
 
                     // This step should not normally be used in your script. Consult the inline help for details.
@@ -54,7 +54,7 @@ pipeline {
         stage('docker run') {
             steps {
                 script {
-                    sh 'docker run -d -p 8010:8010 --rm --name mygolangcontainer ' + registry + imageName + tagName
+                    sh 'docker run -d -p 8010:8010 --rm --name mygolangcontainer ' + registry + imageName       // + tagName
                 }
             }
         }
