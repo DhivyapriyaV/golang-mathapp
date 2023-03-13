@@ -26,7 +26,10 @@ pipeline {
 
        stage('image-build') {
             steps {
-               dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
+                script {
+                    dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
+                    dockerImage.push("${tagName}")
+                }
             }
         }
 
