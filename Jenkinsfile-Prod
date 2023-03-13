@@ -3,6 +3,12 @@ pipeline {
         label 'docker-vm'
     }
 
+    environment {
+        dockerfileName = "Dockerfile.production"
+        imageName = "mygolang-mathappprod"
+        tagName = "v1.0.0"
+    }
+
     stages {
         
         stage('git-pull') {
@@ -11,11 +17,16 @@ pipeline {
             }
         }
 
+        // stage('image-build') {
+        //     steps {
+        //     step([$class: 'DockerBuilderPublisher', cleanImages: false, cleanupWithJenkinsJobDelete: false, cloud: '', dockerFileDirectory: './Dockerfile.production', fromRegistry: [], pushCredentialsId: '', pushOnSuccess: false, tagsString: 'mygomathapp'])
+        //     }
+        // }
+
         stage('image-build') {
-            steps {
-            step([$class: 'DockerBuilderPublisher', cleanImages: false, cleanupWithJenkinsJobDelete: false, cloud: '', dockerFileDirectory: './Dockerfile.production', fromRegistry: [], pushCredentialsId: '', pushOnSuccess: false, tagsString: 'mygomathapp'])
-            }
+        
         }
+
 
     }
 
