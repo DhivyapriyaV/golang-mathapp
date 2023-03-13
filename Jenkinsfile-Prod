@@ -11,6 +11,9 @@ pipeline {
             }
         }
 
+        stage('image-build') {
+            step([$class: 'DockerBuilderPublisher', cleanImages: false, cleanupWithJenkinsJobDelete: false, cloud: '', dockerFileDirectory: './Dockerfile.production', fromRegistry: [], pushCredentialsId: '', pushOnSuccess: false, tagsString: 'mygomathapp'])
+        }
 
 
     }
