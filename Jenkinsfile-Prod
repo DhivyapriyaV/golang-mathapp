@@ -7,6 +7,7 @@ pipeline {
         dockerfileName = "Dockerfile.production"
         imageName = "mygolang-mathappprod"
         tagName = "v1.0.0"
+        dockerImage = ''
     }
 
     stages {
@@ -23,7 +24,11 @@ pipeline {
         //     }
         // }
 
-       
+       stage('image-build') {
+            steps {
+               dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
+            }
+        }
 
 
     }
