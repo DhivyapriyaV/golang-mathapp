@@ -30,7 +30,7 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
-                    // dockerImage.push("${tagName}")
+                    dockerImage.push("${tagName}")
                 }
             }
         }
@@ -39,7 +39,7 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry( 'http://'+registry, registryCredentials) {
-                        echo '$(env.BUILD_NUMBER)'
+                        echo '${env.BUILD_NUMBER}'
                     }
 
                 //    // This step should not normally be used in your script. Consult the inline help for details.
