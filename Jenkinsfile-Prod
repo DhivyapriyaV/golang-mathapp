@@ -8,6 +8,8 @@ pipeline {
         imageName = "mygolang-mathappprod"
         tagName = "v1.0.0"
         dockerImage = ''
+        registry = 192.168.0.155:8085/
+        registryCredentials = "nexus-repo-manager"
     }
 
     stages {
@@ -28,7 +30,7 @@ pipeline {
             steps {
                 script {
                     dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
-                    dockerImage.push("${tagName}")
+                    // dockerImage.push("${tagName}")
                 }
             }
         }
@@ -36,11 +38,15 @@ pipeline {
         stage('nexus-push') {
             steps {
                 script {
-                   // This step should not normally be used in your script. Consult the inline help for details.
-                    withDockerRegistry(credentialsId: 'nexus-repo-manager', url: 'http://192.168.0.155:8085/') {
-                    // some block
-                    dockerImage.push("${tagName}")
-                        }
+                    docker.withRegistry( 'http://'+registry, registryCredentials) {
+                        echo '$(env.BUILD_NUMBER)'
+                    }
+
+                //    // This step should not normally be used in your script. Consult the inline help for details.
+                //     withDockerRegistry(credentialsId: 'nexus-repo-manager', url: 'http://192.168.0.155:8085/') {
+                //     // some block
+                //     dockerImage.push("${tagName}")
+                //         }
                 }
             }
         }
