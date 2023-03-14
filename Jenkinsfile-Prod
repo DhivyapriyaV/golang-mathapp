@@ -52,7 +52,16 @@ pipeline {
             }
         }
 
+        // Stopping previous running Docker containers for cleaner Docker run 
+        stage('stopping running containers') {
+            steps {
+                sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
+            }
+        }
 
+        
+        
 
     }
 
