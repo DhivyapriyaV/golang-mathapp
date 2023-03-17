@@ -30,15 +30,15 @@ pipeline {
         //     }
         // }
 
-//  Sonarqube Analysis step added before building docker image of golang-mathapp
-        stage('sonarqube-analysis') {
-            steps {
-           // def scannerHome = tool 'SonarScanner';
-             withSonarQubeEnv('sonarqube1') {
-                sh "${scannerHome}/bin/sonar-scanner"
-                }
-             }
-        }
+//  Sonarqube Analysis step added -- BEFORE -- building docker image of golang-mathapp
+        // stage('sonarqube-analysis') {
+        //     steps {
+        //    // def scannerHome = tool 'SonarScanner';
+        //      withSonarQubeEnv('sonarqube1') {
+        //         sh "${scannerHome}/bin/sonar-scanner"
+        //         }
+        //      }
+        // }
 
 
        stage('image-build') {
@@ -50,11 +50,24 @@ pipeline {
             }
         }
 
+
+//  Sonarqube Analysis step added  -- AFTER -- building docker image of golang-mathapp
+        stage('sonarqube-analysis') {
+            steps {
+           // def scannerHome = tool 'SonarScanner';
+             withSonarQubeEnv('sonarqube1') {
+                sh "${scannerHome}/bin/sonar-scanner"
+                }
+             }
+        }
+
+
+
         stage('nexus-push') {
             steps {
                 script {
                     docker.withRegistry( 'http://'+registry, registryCredentials) {
-                        echo '${env.BUILD_NUMBER}'
+                        // echo '${env.BUILD_NUMBER}'
                         dockerImage.push("${tagName}") 
                     }
 
