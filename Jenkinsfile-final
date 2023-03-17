@@ -1,0 +1,71 @@
+pipeline {
+    agent {
+        label 'docker-vm'
+    }
+
+    environment {
+        dockerfileName = "Dockerfile.production"
+        imageName = "mygolang-mathappprod"
+        tagName = "v1.0.${BUILD_NUMBER}"
+        dockerImage = ''
+        registry = "192.168.0.155:8085/"
+        registryCredentials = "nexus-repo-manager"
+        scannerHome = tool "SonarScanner-Linux"
+    }
+
+    stages {
+        
+        stage('Git-Pull') {
+            steps {
+               checkout scmGit(branches: [[name: '*/main']], extensions: [], userRemoteConfigs: [[url: 'https://github.com/PriyaSIVATH/golang-mathapp.git']]) 
+            }
+        }
+
+        stage('Sonarqube-Analysis') {
+            steps {
+             withSonarQubeEnv('sonarqube1') {
+                sh "${scannerHome}/bin/sonar-scanner"
+                }
+             }
+        }
+
+       stage('Image-Build') {
+            steps {
+                script {
+                    dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
+                }
+            }
+        }
+
+        stage('Nexus-Push') {
+            steps {
+                script {
+                    docker.withRegistry( 'http://'+registry, registryCredentials) {
+                        dockerImage.push("${tagName}") 
+                    }
+                }
+            }
+        }
+
+        stage('Stop-Running-Containers') {
+            steps {
+                sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
+                sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
+            }
+        }
+
+        stage('Docker-Deploy-Run') {
+            agent {
+                label "deploy-vm"
+            } 
+            steps {
+                script {
+                    sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+                }
+            }
+        }
+
+
+    }
+
+}
