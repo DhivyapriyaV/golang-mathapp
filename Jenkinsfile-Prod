@@ -7,7 +7,7 @@ pipeline {
         dockerfileName = "Dockerfile.production"
         imageName = "mygolang-mathappprod"
         // tagName = "v1.0.0"
-        tagName = "v1.0.${BUILD_NUMBER}"
+        // tagName = "v1.0.${BUILD_NUMBER}"
         dockerImage = ''
         registry = "192.168.0.155:8085/"
         registryCredentials = "nexus-repo-manager"
