@@ -26,6 +26,15 @@ pipeline {
         //     }
         // }
 
+//  Sonarqube Analysis step added before building docker image of golang-mathapp
+        stage('SonarQube Analysis') {
+            def scannerHome = tool 'SonarScanner';
+             withSonarQubeEnv() {
+                sh "${scannerHome}/bin/sonar-scanner"
+             }
+        }
+
+
        stage('image-build') {
             steps {
                 script {
