@@ -10,7 +10,8 @@ pipeline {
         dockerImage = ''
         registry = "192.168.0.155:8085/"
         registryCredentials = "nexus-repo-manager"
-        scannerHome = tool "SonarScanner"
+        // scannerHome = tool "SonarScanner"
+        scannerHome = tool "SonarScanner-Maven-4.8.0.2856"
     }
 
     stages {
