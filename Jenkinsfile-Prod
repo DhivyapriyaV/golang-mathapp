@@ -6,12 +6,14 @@ pipeline {
     environment {
         dockerfileName = "Dockerfile.production"
         imageName = "mygolang-mathappprod"
-        tagName = "v1.0.0"
+        // tagName = "v1.0.0"
+        tagName = "v1.0.${BUILD_NUMBER}"
         dockerImage = ''
         registry = "192.168.0.155:8085/"
         registryCredentials = "nexus-repo-manager"
         // scannerHome = tool "SonarScanner"
-        scannerHome = tool "SonarScanner-Maven-4.8.0.2856"
+        // scannerHome = tool "SonarScanner-Maven-4.8.0.2856"
+        scannerHome = tool "SonarScanner-Linux"
     }
 
     stages {
