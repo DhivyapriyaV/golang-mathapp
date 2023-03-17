@@ -10,6 +10,7 @@ pipeline {
         dockerImage = ''
         registry = "192.168.0.155:8085/"
         registryCredentials = "nexus-repo-manager"
+        scannerHome = tool "SonarScanner"
     }
 
     stages {
@@ -28,7 +29,7 @@ pipeline {
 
 //  Sonarqube Analysis step added before building docker image of golang-mathapp
         stage('SonarQube Analysis') {
-            def scannerHome = tool 'SonarScanner';
+           // def scannerHome = tool 'SonarScanner';
              withSonarQubeEnv() {
                 sh "${scannerHome}/bin/sonar-scanner"
              }
