@@ -21,20 +21,20 @@ pipeline {
             }
         }
 
-        stage('Sonarqube-Analysis') {
-            steps {
-             withSonarQubeEnv('sonarqube1') {
-                sh "${scannerHome}/bin/sonar-scanner"
-                }
-             }
-        }
-
        stage('Image-Build') {
             steps {
                 script {
                     dockerImage = docker.build("${imageName}", "-f ${dockerfileName} .")
                 }
             }
+        }
+
+        stage('Sonarqube-Analysis') {
+            steps {
+             withSonarQubeEnv('sonarqube1') {
+                sh "${scannerHome}/bin/sonar-scanner"
+                }
+             }
         }
 
         stage('Nexus-Push') {
