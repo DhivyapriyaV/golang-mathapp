@@ -89,13 +89,13 @@ pipeline {
         // }
 
         stage('docker run') {
-            agent {
-                label "deploy-vm"
-                }
+            // agent {
+            //     label "deploy-vm"
+            //     }
             steps {
-                // agent {
-                // label "deploy-vm"
-                // } 
+                agent {
+                label "deploy-vm"
+                } 
                 script {
                     sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
                     sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
