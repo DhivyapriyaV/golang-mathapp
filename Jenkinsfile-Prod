@@ -1,6 +1,7 @@
 pipeline {
     agent {
-        label 'docker-vm'
+        // label 'docker-vm'
+        label "deploy-vm"
     }
 
     environment {
@@ -98,7 +99,8 @@ pipeline {
 
         stage('docker run') {
             agent {
-                label "deploy-vm"
+                // label "deploy-vm"
+                label 'docker-vm'
                 }
             steps {
                 // agent {
