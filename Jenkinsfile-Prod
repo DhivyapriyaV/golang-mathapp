@@ -109,7 +109,12 @@ pipeline {
                 script {
                     sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
                     sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
+                    // sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+
+                    withDockerRegistry(credentialsId: 'nexus-repo-manager', url: 'http://192.168.0.155:8085/') {
+                    // sh 'docker run -d -p 8020:8010 --rm --name mathapp 192.168.0.155:8085/mygolang-mathappprod:v1.0.0'
                     sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+                    }
                 }
             }
         }
