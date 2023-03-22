@@ -89,7 +89,7 @@ pipeline {
             }
         }
 
-        // Stopping previous running Docker containers for cleaner Docker run 
+        //   // Stopping previous running Docker containers for cleaner Docker run 
         // stage('stopping running containers') {
         //     steps {
         //         sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
@@ -97,28 +97,54 @@ pipeline {
         //     }
         // }
 
-        stage('docker run') {
-            agent {
-                label "deploy-vm"
-                // label 'docker-vm'
-                }
-            steps {
-                // agent {
-                // label "deploy-vm"
-                // } 
-                script {
-                    sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
-                    sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
-                    // sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+        // stage('docker run') {
+        //     agent {
+        //         label "deploy-vm"
+        //         // label 'docker-vm'
+        //         }
+        //     steps {
+        //         // agent {
+        //         // label "deploy-vm"
+        //         // } 
+        //         script {
+        //             sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
+        //             sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
+        //             // sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
 
-                    withDockerRegistry(credentialsId: 'nexus-repo-manager', url: 'http://192.168.0.155:8085/') {
-                    // sh 'docker run -d -p 8020:8010 --rm --name mathapp 192.168.0.155:8085/mygolang-mathappprod:v1.0.0'
-                    sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+        //             withDockerRegistry(credentialsId: 'nexus-repo-manager', url: 'http://192.168.0.155:8085/') {
+        //             // sh 'docker run -d -p 8020:8010 --rm --name mathapp 192.168.0.155:8085/mygolang-mathappprod:v1.0.0'
+        //             sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+        //             }
+        //         }
+        //     }
+        // }
+
+
+        stage('sequential stage - deployment server') {
+            agent {
+                label 'deploy-vm'
+            }
+            stages {
+                 // Stopping previous running Docker containers for cleaner Docker run 
+                stage('stopping running containers') {
+                    steps {
+                        sh 'docker ps -f name=mymathcontainer -q | xargs --no-run-if-empty docker container stop'
+                        sh 'docker container ls -a -fname=mymathcontainer -q | xargs -r docker container rm'
+                    }
+                }
+                stage('docker run') {
+                    steps {
+                        script {
+                            withDockerRegistry(credentialsId: 'nexus-repo-manager', url: 'http://192.168.0.155:8085/') {
+                             // sh 'docker run -d -p 8020:8010 --rm --name mathapp 192.168.0.155:8085/mygolang-mathappprod:v1.0.0'
+                            sh 'docker run -d -p 8020:8010 --rm --name mymathcontainer ' + registry + imageName + ':${tagName}' 
+                            }   
+                        }
                     }
                 }
             }
-        }
 
+        }
 
     }
 
