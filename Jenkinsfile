@@ -23,7 +23,6 @@ pipeline {
                     dockerImage = docker.build imageName
                 }
             }
-
         }
 
         stage('nexus - upload image') {

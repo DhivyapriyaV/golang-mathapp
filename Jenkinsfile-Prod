@@ -6,15 +6,22 @@ pipeline {
 
     environment {
         dockerfileName = "Dockerfile.production"
+        // imageName = "priyasivath/mygolang-mathappprod"
         imageName = "mygolang-mathappprod"
         // tagName = "v1.0.0"
         tagName = "v1.0.${BUILD_NUMBER}"
         dockerImage = ''
         registry = "192.168.0.155:8085/"
+        // registry = "https://192.168.0.155:8085/"
         registryCredentials = "nexus-repo-manager"
         // scannerHome = tool "SonarScanner"
         // scannerHome = tool "SonarScanner-Maven-4.8.0.2856"
         scannerHome = tool "SonarScanner-Linux"
+        profileDockerHub = "priyasivath"
+        // registry_DockerHub = "https://hub.docker.com/"
+        // registry_DockerHub = "https://index.docker.io/"
+        registry_DockerHub = ""
+        credentials_DockerHub = "DockerHub-Credentials"
     }
 
     stages {
@@ -52,6 +59,33 @@ pipeline {
         }
 
 
+        stage('sequential stage - Docker HUB') {
+            stages {
+                stage('docker image-build') {
+                    steps {
+                        script {
+                            dockerImage = docker.build("${profileDockerHub+'/'+imageName}", "-f ${dockerfileName} .")
+                        }
+                    }
+                }
+        
+                stage('docker-push') {
+                    steps {
+                        script {
+                                // /* withDockerRegistry(credentialsId: '${credentials_DockerHub}', url: '${registry_DockerHub}') {
+                                    // sh 'dockerImage.push("${tagName}")'*/
+                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://index.docker.io/') {
+                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/') {
+                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/u/priyasivath/') {
+                            withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: '') {
+                                dockerImage.push("${tagName}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 //  Sonarqube Analysis step added  -- AFTER -- building docker image of golang-mathapp
         stage('sonarqube-analysis') {
             steps {
@@ -75,6 +109,7 @@ pipeline {
         stage('nexus-push') {
             steps {
                 script {
+                    // docker.withRegistry( registry, registryCredentials) {
                     docker.withRegistry( 'http://'+registry, registryCredentials) {
                         // echo '${env.BUILD_NUMBER}'
                         dockerImage.push("${tagName}") 
