@@ -59,32 +59,33 @@ pipeline {
         }
 
 
-        stage('sequential stage - Docker HUB') {
-            stages {
-                stage('docker image-build') {
-                    steps {
-                        script {
-                            dockerImage = docker.build("${profileDockerHub+'/'+imageName}", "-f ${dockerfileName} .")
-                        }
-                    }
-                }
+        //    // Hiding here since it disturbs nexus push - by imageName
+        // stage('sequential stage - Docker HUB') {
+        //     stages {
+        //         stage('docker image-build') {
+        //             steps {
+        //                 script {
+        //                     dockerImage = docker.build("${profileDockerHub+'/'+imageName}", "-f ${dockerfileName} .")
+        //                 }
+        //             }
+        //         }
         
-                stage('docker-push') {
-                    steps {
-                        script {
-                                // /* withDockerRegistry(credentialsId: '${credentials_DockerHub}', url: '${registry_DockerHub}') {
-                                    // sh 'dockerImage.push("${tagName}")'*/
-                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://index.docker.io/') {
-                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/') {
-                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/u/priyasivath/') {
-                            withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: '') {
-                                dockerImage.push("${tagName}")
-                            }
-                        }
-                    }
-                }
-            }
-        }
+        //         stage('docker-push') {
+        //             steps {
+        //                 script {
+        //                         // /* withDockerRegistry(credentialsId: '${credentials_DockerHub}', url: '${registry_DockerHub}') {
+        //                             // sh 'dockerImage.push("${tagName}")'*/
+        //                         // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://index.docker.io/') {
+        //                         // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/') {
+        //                         // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/u/priyasivath/') {
+        //                     withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: '') {
+        //                         dockerImage.push("${tagName}")
+        //                     }
+        //                 }
+        //             }
+        //         }
+        //     }
+        // }
 
 //  Sonarqube Analysis step added  -- AFTER -- building docker image of golang-mathapp
         stage('sonarqube-analysis') {
@@ -153,6 +154,34 @@ pipeline {
         //         }
         //     }
         // }
+
+        stage('sequential stage - Docker HUB') {
+            stages {
+                stage('docker image-build') {
+                    steps {
+                        script {
+                            dockerImage = docker.build("${profileDockerHub+'/'+imageName}", "-f ${dockerfileName} .")
+                        }
+                    }
+                }
+        
+                stage('docker-push') {
+                    steps {
+                        script {
+                                // /* withDockerRegistry(credentialsId: '${credentials_DockerHub}', url: '${registry_DockerHub}') {
+                                    // sh 'dockerImage.push("${tagName}")'*/
+                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://index.docker.io/') {
+                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/') {
+                                // withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: 'https://hub.docker.com/u/priyasivath/') {
+                            withDockerRegistry(credentialsId: 'DockerHub-Credentials', url: '') {
+                                dockerImage.push("${tagName}")
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
 
 
         stage('sequential stage - deployment server') {
